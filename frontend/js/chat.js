@@ -978,16 +978,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     return `
       <div class="sources-container">
-        <span style="font-size:0.68rem; color:#64748b; font-weight:500;">Cited Sources:</span>
+        <span class="sources-label">📚 Retrieved from</span>
         ${sources.map((s, idx) => {
           const sourceKey = `${msgId}-src-${idx}`;
           window.__sourceRegistry[sourceKey] = s;
-          const docName = s.document || 'Knowledge Document';
+          const docName = (s.document || 'Knowledge Document')
+            .replace(/^\d+\s+/,'')           // strip leading "06 "
+            .replace(/\.pdf$/i,'')            // strip .pdf extension
+            .replace(/_/g,' ');               // underscores → spaces
           const pageBadge = s.page ? `<span class="source-page-badge">p.${s.page}</span>` : '';
-          const scoreBadge = s.relevance_score ? `<span class="source-score-badge">${Math.round(s.relevance_score * 100)}%</span>` : '';
+          const scoreBadge = s.relevance_score ? `<span class="source-score-badge">${Math.round(s.relevance_score * 100)}% match</span>` : '';
 
           return `
-            <button type="button" class="source-chip" onclick="window.openSourceInspector('${sourceKey}')" title="Inspect source and view highlighted evidence chunk">
+            <button type="button" class="source-chip" onclick="window.openSourceInspector('${sourceKey}')" title="View source: ${escapeHTML(s.document || '')}">
               <span class="source-icon">📄</span>
               <span class="source-doc-name">${escapeHTML(docName)}</span>
               ${pageBadge}
@@ -998,6 +1001,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `;
   }
+
 
   function initSourceInspector() {
     const modal = document.getElementById('source-inspector-modal');

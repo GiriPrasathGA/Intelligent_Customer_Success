@@ -1,27 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NovaCart AI — Intelligent Customer Success Copilot</title>
-  <meta name="description" content="NovaCart AI Customer Success Copilot — 24/7 intelligent assistance for orders, product recommendations, returns, warranty, and customer support.">
-  
+  <meta name="description"
+    content="NovaCart AI Customer Success Copilot — 24/7 intelligent assistance for orders, product recommendations, returns, warranty, and customer support.">
+
   <!-- Marked.js for dynamic Markdown rendering -->
   <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
   <!-- Typography & Stylesheets -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/chat.css">
   <style>
-    body { overflow: hidden; }
-    .chat-layout { height: 100vh; }
-    #messages-container { flex: 1; }
+    body {
+      overflow: hidden;
+    }
+
+    .chat-layout {
+      height: 100vh;
+    }
+
+    #messages-container {
+      flex: 1;
+    }
   </style>
 </head>
+
 <body>
 
   <!-- Dynamic Particle & Mesh Background -->
@@ -42,8 +55,9 @@
 
       <div class="sidebar-top-actions">
         <button class="btn-new-chat" id="btn-new-chat">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 5v14M5 12h14"/>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14" />
           </svg>
           New Conversation
         </button>
@@ -93,7 +107,8 @@
       <div class="chat-topbar">
         <div class="chat-topbar-left">
           <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Toggle Sidebar Navigation">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -117,7 +132,8 @@
           </button>
 
           <button class="topbar-btn" id="btn-clear-chat" title="Clear Current Conversation">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
             </svg>
@@ -134,7 +150,8 @@
           <div class="welcome-icon">🤖</div>
           <h1 class="welcome-title">Welcome to NovaCart AI</h1>
           <p class="welcome-subtitle">
-            Your intelligent customer success co-pilot. Ask anything about order statuses, product recommendations, warranty guidelines, or returns.
+            Your intelligent customer success co-pilot. Ask anything about order statuses, product recommendations,
+            warranty guidelines, or returns.
           </p>
 
           <div class="welcome-grid">
@@ -143,7 +160,8 @@
               <div class="welcome-card-title">Track Order #1001</div>
               <div class="welcome-card-desc">Check shipment status & estimated delivery date</div>
             </div>
-            <div class="welcome-card" onclick="window.sendRecommendation('Recommend a smartphone with great camera under 30000')">
+            <div class="welcome-card"
+              onclick="window.sendRecommendation('Recommend a smartphone with great camera under 30000')">
               <div class="welcome-card-icon">📱</div>
               <div class="welcome-card-title">Product Finder</div>
               <div class="welcome-card-desc">Find top-rated smartphones under budget</div>
@@ -166,31 +184,32 @@
       <!-- Bottom Command Input Bar -->
       <div class="chat-input-area">
         <div class="input-container">
-          <textarea
-            id="chat-input"
-            rows="1"
+          <textarea id="chat-input" rows="1"
             placeholder="Ask me anything about NovaCart — products, orders, returns, payments..."
-            aria-label="Chat message input"
-          ></textarea>
+            aria-label="Chat message input"></textarea>
 
           <div class="input-actions">
             <button class="input-action-btn btn-mic" title="Voice Input (Speech-to-Text)" id="btn-mic">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="22"/>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="22" />
               </svg>
             </button>
 
-            <button class="input-action-btn" title="Clear message" id="btn-clear-input" onclick="document.getElementById('chat-input').value='';autoResizeTextarea(document.getElementById('chat-input'))">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button class="input-action-btn" title="Clear message" id="btn-clear-input"
+              onclick="document.getElementById('chat-input').value='';autoResizeTextarea(document.getElementById('chat-input'))">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
 
             <button id="btn-send" title="Send message (Enter)" disabled>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
@@ -213,7 +232,8 @@
           <span class="history-heading">Conversation History</span>
         </div>
         <button class="history-close-btn" id="btn-close-history" title="Close history panel">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -229,7 +249,8 @@
     <div id="history-overlay" class="history-overlay hidden"></div>
 
     <!-- ── 4. Document Source & Evidence Inspector Modal ── -->
-    <div id="source-inspector-modal" class="source-modal hidden" role="dialog" aria-modal="true" aria-labelledby="source-modal-title">
+    <div id="source-inspector-modal" class="source-modal hidden" role="dialog" aria-modal="true"
+      aria-labelledby="source-modal-title">
       <div class="source-modal-backdrop" id="source-modal-backdrop"></div>
       <div class="source-modal-dialog">
         <div class="source-modal-header">
@@ -245,8 +266,10 @@
             </div>
           </div>
           <div class="source-modal-actions">
-            <a id="source-modal-raw-link" href="#" target="_blank" class="btn btn-secondary btn-sm" title="Open PDF file in new browser tab">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <a id="source-modal-raw-link" href="#" target="_blank" class="btn btn-secondary btn-sm"
+              title="Open PDF file in new browser tab">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
                 <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -254,7 +277,8 @@
               <span>View PDF</span>
             </a>
             <button id="source-modal-close" class="history-close-btn" title="Close inspector (Esc)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
@@ -262,20 +286,17 @@
           </div>
         </div>
 
-        <div class="source-modal-tabs">
-          <button class="source-tab active" id="tab-evidence">🎯 Retrieved Evidence Chunk</button>
-          <button class="source-tab" id="tab-full-doc">📖 Full Document View</button>
-        </div>
+
 
         <div class="source-modal-content">
-          <!-- Evidence Chunk View -->
+          <!-- Evidence Chunk -->
           <div id="view-evidence" class="source-view-pane active">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;font-size:0.8rem;color:var(--text-muted)">
               <span>Excerpt retrieved by RAG vector similarity:</span>
               <button id="btn-copy-evidence" class="btn btn-ghost btn-sm" title="Copy excerpt">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                 </svg>
                 <span>Copy</span>
               </button>
@@ -283,13 +304,14 @@
             <div id="evidence-chunk-content" class="evidence-chunk-box"></div>
           </div>
 
-          <!-- Full Document View -->
+          <!-- Full Document View (loaded when PDF tab was clicked — kept for JS compat) -->
           <div id="view-full-doc" class="source-view-pane hidden">
             <div class="full-doc-scroll" id="full-doc-container">
               <div id="full-doc-loading" class="doc-loading">Loading full document...</div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -299,4 +321,5 @@
   <script src="js/app.js"></script>
   <script src="js/chat.js"></script>
 </body>
+
 </html>
