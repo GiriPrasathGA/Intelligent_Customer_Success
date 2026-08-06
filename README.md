@@ -1,5 +1,4 @@
 # NovaCart AI Customer Support — Project README
-# ==================================================
 
 ## Quick Start
 
