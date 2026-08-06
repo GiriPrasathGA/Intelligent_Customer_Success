@@ -407,3 +407,74 @@ pre code {
   padding: 0;
   border: none;
 }
+
+/* ── Markdown Rich Elements & Tables ── */
+.message-bubble table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0.85rem 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  font-size: 0.875rem;
+}
+
+.message-bubble th {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border-medium);
+}
+
+.message-bubble td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+}
+
+.message-bubble tr:last-child td {
+  border-bottom: none;
+}
+
+.message-bubble tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.message-bubble tr:hover td {
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--text-primary);
+}
+
+.message-bubble blockquote {
+  border-left: 3.5px solid var(--brand-primary);
+  background: rgba(99, 102, 241, 0.08);
+  padding: 0.6rem 1rem;
+  margin: 0.75rem 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--text-secondary);
+}
+
+.message-bubble ul, .message-bubble ol {
+  padding-left: 1.35rem;
+  margin: 0.5rem 0;
+}
+
+.message-bubble li {
+  margin-bottom: 0.35rem;
+}
+
+.message-bubble a {
+  color: var(--text-cyan);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--text-cyan);
+  transition: all var(--transition-fast);
+}
+
+.message-bubble a:hover {
+  color: #ffffff;
+  border-bottom-style: solid;
+}
+

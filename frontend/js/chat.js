@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnToggleSidebar  = document.getElementById('btn-toggle-sidebar');
   const btnNewChat        = document.getElementById('btn-new-chat');
   const convList          = document.getElementById('conversation-list');
+  const sidebarConvList   = document.getElementById('sidebar-conversation-list');
   const historyPanel      = document.getElementById('history-panel');
   const historyOverlay    = document.getElementById('history-overlay');
   const btnToggleHistory  = document.getElementById('btn-toggle-history');
@@ -71,16 +72,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Init ───────────────────────────────────────────────────────────────
 
   async function init() {
-    // Load conversations
+    // 1. Ensure guest session / auth token is created BEFORE loading conversations or WS
+    await Auth.ensureGuestSession();
+
+    // 2. Load conversations
     await loadConversations();
 
-    // Setup WebSocket
+    // 3. If redirected from profile.html with a specific conversation ID, load it!
+    const pendingConvId = sessionStorage.getItem('load_conv');
+    if (pendingConvId) {
+      sessionStorage.removeItem('load_conv');
+      await loadConversation(pendingConvId);
+    }
+
+    // 4. Setup WebSocket
     setupWebSocket();
 
-    // Init Voice Input (Speech-to-Text)
+    // 5. Init Voice Input (Speech-to-Text)
     initSpeechRecognition();
 
-    // Setup Auto-Play Voice toggle
+    // 6. Setup Auto-Play Voice toggle
     setupAutoPlayVoice();
   }
 
@@ -330,38 +341,43 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function renderConversationList(conversations) {
-    if (!convList) return;
-    convList.innerHTML = '';
+    const containers = [convList, sidebarConvList].filter(Boolean);
+    if (!containers.length) return;
 
-    if (!conversations || !conversations.length) {
-      convList.innerHTML = `<div class="empty-conv-notice">No conversation history</div>`;
-      return;
-    }
+    containers.forEach(container => {
+      container.innerHTML = '';
 
-    conversations.forEach(conv => {
-      const item = document.createElement('div');
-      item.className = 'conversation-item' + (conv.id === currentConversationId ? ' active' : '');
-      item.dataset.id = conv.id;
-      item.innerHTML = `
-        <div class="conversation-title" title="${conv.title}">💬 ${conv.title}</div>
-        <button class="conversation-delete" title="Delete" data-id="${conv.id}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M18 6 6 18M6 6l12 12"/>
-          </svg>
-        </button>
-      `;
+      if (!conversations || !conversations.length) {
+        container.innerHTML = `<div class="empty-conv-notice">No conversation history</div>`;
+        return;
+      }
 
-      item.addEventListener('click', (e) => {
-        if (e.target.closest('.conversation-delete')) return;
-        loadConversation(conv.id);
+      conversations.forEach(conv => {
+        const item = document.createElement('div');
+        item.className = 'conversation-item' + (conv.id === currentConversationId ? ' active' : '');
+        item.dataset.id = conv.id;
+        const safeTitle = escapeHTML(conv.title || 'Untitled Chat');
+        item.innerHTML = `
+          <div class="conversation-title" title="${safeTitle}">💬 ${safeTitle}</div>
+          <button class="conversation-delete" title="Delete" data-id="${conv.id}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        `;
+
+        item.addEventListener('click', (e) => {
+          if (e.target.closest('.conversation-delete')) return;
+          loadConversation(conv.id);
+        });
+
+        item.querySelector('.conversation-delete').addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await deleteConversation(conv.id);
+        });
+
+        container.appendChild(item);
       });
-
-      item.querySelector('.conversation-delete').addEventListener('click', async (e) => {
-        e.stopPropagation();
-        await deleteConversation(conv.id, item);
-      });
-
-      convList.appendChild(item);
     });
   }
 
@@ -401,15 +417,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  async function deleteConversation(convId, itemEl) {
+  async function deleteConversation(convId) {
     try {
       await API.delete(`/api/conversations/${convId}`);
-      itemEl.style.animation = 'fade-out 200ms ease forwards';
-      setTimeout(() => itemEl.remove(), 200);
+      
+      document.querySelectorAll(`.conversation-item[data-id="${convId}"]`).forEach(el => {
+        el.style.animation = 'fade-out 200ms ease forwards';
+        setTimeout(() => el.remove(), 200);
+      });
 
       if (currentConversationId === convId) {
         startNewChat();
       }
+      Toast.success('Conversation deleted');
     } catch (err) {
       Toast.error('Failed to delete conversation');
     }
@@ -493,10 +513,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function appendUserMessage(text, timestamp) {
     const time = timestamp ? formatTime(timestamp) : formatTime(new Date().toISOString());
+    const user = Auth.getUser();
+    const initials = user && user.name ? getInitials(user.name) : '👤';
 
     const wrapper = document.createElement('div');
     wrapper.className = 'message-wrapper user';
     wrapper.innerHTML = `
+      <div class="message-avatar">${initials}</div>
       <div class="message-content">
         <div class="message-bubble">${escapeHTML(text)}</div>
         <div class="message-meta">
@@ -796,7 +819,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function startNewChat() {
     currentConversationId = null;
     messagesContainer.innerHTML = '';
-    welcomeScreen?.classList.remove('hidden');
+    if (welcomeScreen) {
+      welcomeScreen.classList.remove('hidden');
+      messagesContainer.appendChild(welcomeScreen);
+    }
     lastAssistantMessage = null;
 
     if (agentBadge) agentBadge.textContent = '🤖 NovaCart Assistant';
@@ -867,6 +893,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const shouldOpen = (show !== undefined) ? show : !historyPanel?.classList.contains('open');
     historyPanel?.classList.toggle('open', shouldOpen);
     btnToggleHistory?.classList.toggle('active', shouldOpen);
+    if (shouldOpen) {
+      loadConversations();
+    }
     if (window.innerWidth <= 768) {
       historyOverlay?.classList.toggle('hidden', !shouldOpen);
     }
