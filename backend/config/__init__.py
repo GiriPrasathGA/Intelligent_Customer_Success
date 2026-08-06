@@ -1,0 +1,1 @@
+# novaTech AI — Config Package
